@@ -24,11 +24,13 @@ import sys
 #   - URLs de ejemplo (reemplazar con URLs reales):
 
 FUENTES_PENINSULAR = [
-    "https://www.youtube.com/watch?v=w3ot5nH-aCs"
+    "https://www.youtube.com/watch?v=gMC6NNbxRJ0",
+    "https://www.youtube.com/watch?v=L7QSthKW3IA"
 ]
 
 FUENTES_CANARIO = [
-    "https://youtu.be/N54TzfCbJOU?si=6hmmUGgP34h8FxT2"
+    "https://www.youtube.com/watch?v=E_tWiBC9CpI",
+    "https://www.youtube.com/watch?v=hoAN51vcGTc"
 ]
 
 # ─────────────────────────────────────────────
