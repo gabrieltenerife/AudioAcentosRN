@@ -25,12 +25,16 @@ import sys
 
 FUENTES_PENINSULAR = [
     "https://www.youtube.com/watch?v=gMC6NNbxRJ0",
-    "https://www.youtube.com/watch?v=L7QSthKW3IA"
+    "https://www.youtube.com/watch?v=L7QSthKW3IA",
+    "https://www.youtube.com/watch?v=7SbJ-i20WVc",
+    "https://www.youtube.com/watch?v=xoDONicMLlE"
 ]
 
 FUENTES_CANARIO = [
     "https://www.youtube.com/watch?v=E_tWiBC9CpI",
-    "https://www.youtube.com/watch?v=hoAN51vcGTc"
+    "https://www.youtube.com/watch?v=hoAN51vcGTc",
+    "https://www.youtube.com/watch?v=w3ot5nH-aCs",
+    "https://www.youtube.com/watch?v=JQdqwqYcsVc"
 ]
 
 # ─────────────────────────────────────────────

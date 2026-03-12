@@ -135,62 +135,81 @@ class AudioAugmentation(keras.layers.Layer):
 
 class EspectrogramaAugmentation(keras.layers.Layer):
     """
-    Augmentation directamente sobre espectrogramas Mel.
-    Más eficiente que augmentar el audio crudo.
-
-    Técnicas:
-        - SpecAugment: enmascaramiento de frecuencias y tiempo
-        - Jitter de amplitud
+    SpecAugment compatible con XLA / GPU
     """
 
-    def __init__(self, freq_mask_param: int = 20, time_mask_param: int = 20,
-                 n_freq_masks: int = 2, n_time_masks: int = 2, **kwargs):
+    def __init__(self, freq_mask_param=20, time_mask_param=20,
+                 n_freq_masks=2, n_time_masks=2, **kwargs):
         super().__init__(**kwargs)
-        self.freq_mask_param  = freq_mask_param
-        self.time_mask_param  = time_mask_param
-        self.n_freq_masks     = n_freq_masks
-        self.n_time_masks     = n_time_masks
+
+        self.freq_mask_param = freq_mask_param
+        self.time_mask_param = time_mask_param
+        self.n_freq_masks = n_freq_masks
+        self.n_time_masks = n_time_masks
 
     def call(self, inputs, training=None):
+
         if not training:
             return inputs
 
         x = inputs
+        shape = tf.shape(x)
 
-        # ── SpecAugment: máscaras de frecuencia ─────────────
+        batch = shape[0]
+        freq  = shape[1]
+        time  = shape[2]
+
+        # ─────────────────────────────
+        # FREQUENCY MASKING
+        # ─────────────────────────────
         for _ in range(self.n_freq_masks):
-            f = tf.random.uniform([], 0, self.freq_mask_param, dtype=tf.int32)
-            f0 = tf.random.uniform([], 0, tf.shape(x)[1] - f, dtype=tf.int32)
-            mask = tf.concat([
-                tf.ones([f0, tf.shape(x)[2], 1]),
-                tf.zeros([f, tf.shape(x)[2], 1]),
-                tf.ones([tf.shape(x)[1] - f0 - f, tf.shape(x)[2], 1])
-            ], axis=0)
-            x = x * mask[tf.newaxis, ...]
 
-        # ── SpecAugment: máscaras de tiempo ─────────────────
+            f = tf.random.uniform([], 0, self.freq_mask_param, dtype=tf.int32)
+            f0 = tf.random.uniform([], 0, freq - f, dtype=tf.int32)
+
+            freq_range = tf.range(freq)
+
+            mask = tf.logical_or(
+                freq_range < f0,
+                freq_range >= f0 + f
+            )
+
+            mask = tf.cast(mask, x.dtype)
+            mask = tf.reshape(mask, [1, freq, 1, 1])
+
+            x = x * mask
+
+        # ─────────────────────────────
+        # TIME MASKING
+        # ─────────────────────────────
         for _ in range(self.n_time_masks):
+
             t = tf.random.uniform([], 0, self.time_mask_param, dtype=tf.int32)
-            t0 = tf.random.uniform([], 0, tf.shape(x)[2] - t, dtype=tf.int32)
-            mask = tf.concat([
-                tf.ones([tf.shape(x)[1], t0, 1]),
-                tf.zeros([tf.shape(x)[1], t, 1]),
-                tf.ones([tf.shape(x)[1], tf.shape(x)[2] - t0 - t, 1])
-            ], axis=1)
-            x = x * mask[tf.newaxis, ...]
+            t0 = tf.random.uniform([], 0, time - t, dtype=tf.int32)
+
+            time_range = tf.range(time)
+
+            mask = tf.logical_or(
+                time_range < t0,
+                time_range >= t0 + t
+            )
+
+            mask = tf.cast(mask, x.dtype)
+            mask = tf.reshape(mask, [1, 1, time, 1])
+
+            x = x * mask
 
         return x
 
     def get_config(self):
         config = super().get_config()
         config.update({
-            'freq_mask_param': self.freq_mask_param,
-            'time_mask_param': self.time_mask_param,
-            'n_freq_masks': self.n_freq_masks,
-            'n_time_masks': self.n_time_masks,
+            "freq_mask_param": self.freq_mask_param,
+            "time_mask_param": self.time_mask_param,
+            "n_freq_masks": self.n_freq_masks,
+            "n_time_masks": self.n_time_masks
         })
         return config
-
 
 # ─────────────────────────────────────────────
 # EJEMPLO DE USO
