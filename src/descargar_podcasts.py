@@ -165,7 +165,7 @@ def procesar_dataset_completo(data_dir: Path = Path("data")):
             wav = descargar_audio_wav(url, data_dir / "_tmp", f"peninsular_{i:02d}")
             if wav:
                 n = cortar_en_clips(wav, carpeta_peninsular, duracion_seg=5,
-                                     inicio_seg=30, num_clips=50)
+                                     inicio_seg=30, num_clips=500)
                 total_peninsular += n
     else:
         print("\n⚠️  No hay URLs para peninsular. Añade URLs en FUENTES_PENINSULAR")
@@ -178,7 +178,7 @@ def procesar_dataset_completo(data_dir: Path = Path("data")):
             wav = descargar_audio_wav(url, data_dir / "_tmp", f"canario_{i:02d}")
             if wav:
                 n = cortar_en_clips(wav, carpeta_canario, duracion_seg=5,
-                                     inicio_seg=30, num_clips=50)
+                                     inicio_seg=30, num_clips=500)
                 total_canario += n
     else:
         print("\n⚠️  No hay URLs para canario. Añade URLs en FUENTES_CANARIO")
