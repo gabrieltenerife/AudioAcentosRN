@@ -29,8 +29,8 @@ DURACION_SEG   = 5
 N_MELS         = 128       
 HOP_LENGTH     = 512
 N_FFT          = 2048
-BATCH_SIZE     = 32
-EPOCHS         = 50
+BATCH_SIZE     = 256
+EPOCHS         = 15
 IMG_HEIGHT     = 128
 IMG_WIDTH      = 128
 CLASES         = ['peninsular', 'canario']
@@ -243,8 +243,6 @@ def construir_cnn_ligera(input_shape=(IMG_HEIGHT, IMG_WIDTH, 1), num_clases=2):
 # ─────────────────────────────────────────────
 # 4. ENTRENAMIENTO Y VISUALIZACIÓN
 # ─────────────────────────────────────────────
-
-print("Entrenando modelo")
 
 def entrenar_modelo(model, X_train, y_train, X_val, y_val):
     callbacks = [
