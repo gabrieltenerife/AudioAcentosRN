@@ -5,16 +5,25 @@ Ejecutar con: python ui_gradio.py
 Requiere: pip install gradio librosa tensorflow
 """
 
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 import os
 import numpy as np
 import librosa
 import tensorflow as tf
 import gradio as gr
+from AudioAugmentation import EspectrogramaAugmentation
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 from pathlib import Path
+
+
+
 
 # ─────────────────────────────────────────────
 # CONFIGURACIÓN
@@ -62,7 +71,10 @@ def cargar_modelo():
         print("   Ejecuta primero: python src/modelo_acento.py")
         return False
     try:
-        modelo = tf.keras.models.load_model(str(MODELO_PATH))
+        modelo = tf.keras.models.load_model(
+        str(MODELO_PATH),
+        custom_objects={"EspectrogramaAugmentation": EspectrogramaAugmentation}
+        )
         print(f"✅ Modelo cargado desde {MODELO_PATH}")
         return True
     except Exception as e:
